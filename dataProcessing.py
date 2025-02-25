@@ -8,6 +8,8 @@ import json
 import math
 import sys
 from collections import Counter
+from rapidfuzz import fuzz
+
 
 #extract taxonomic ids according to categories file
 def extr(catg, fx2):
@@ -246,4 +248,27 @@ def write_counter(file, dt):
     with open(file, "w") as f:
         for key, value in dt.items():
             f.write(f"{key}\t{value}\n")  # Tab-separated format
+
+
+def compare_strings(str1, str2):   #Compare two strings using fuzzy matching
+    return fuzz.ratio(str1, str2)
+
+def is_valid_for_matching(text):    #Check if a string has at least two words
+    return len(str(text).split()) >= 2
+
+def ratioNIndex(str1, str2):
+    fuzzRatio = compare_strings(str1, str2)
+    if fuzzRatio >= THRESHOLD:
+        return pd.Series([fuzzRatio, str2])
+    else:
+        return pd.Series([fuzzRatio, 0])
+
+# Apply last 3 functions like so:
+#ottNotInWdDf["Similarity Score", "index"] = ottNotInWdDf.apply(lambda row: ratioNIndex(str(row['name']), str(wdDf.loc[row.name, 'WdName'])), axis=1)
+
+#ottNotInWdDf["Similarity Score"] = ottNotInWdDf.apply(
+#    lambda row: compare_strings(str(row['name']), str(wdDf.loc[row.name, 'WdName']))
+#    if is_valid_for_matching(row['name']) and is_valid_for_matching(wdDf.loc[row.name, 'WdName']) else 0,
+#    axis=1
+#)
 
