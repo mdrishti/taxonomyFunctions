@@ -250,6 +250,11 @@ def write_counter(file, dt):
             f.write(f"{key}\t{value}\n")  # Tab-separated format
 
 
+def dfParse(df1, df2, c1, c2, c3): #for getting values of df1[c3] in df2, if df1[c1] matches df2[c2]
+    wdDf["rank"] = wdDf["ott"].map(ottDf.set_index("uid")["rank"])
+    df2[c3] = df2[c2].map(df1.set_index(c1)[c3])
+    return df2
+
 def compare_strings(str1, str2):   #Compare two strings using fuzzy matching
     return fuzz.ratio(str1, str2)
 
